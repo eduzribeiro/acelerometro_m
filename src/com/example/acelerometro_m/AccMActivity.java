@@ -24,6 +24,8 @@ import net.sourceforge.pdsplibj.pdsdf.*;
 
 public class AccMActivity extends ActionBarActivity implements SensorEventListener {
 	
+	// Teste
+	
 	 private long last_timeAcel=0;		
 	 private long current_timeAcel=0;
 	
