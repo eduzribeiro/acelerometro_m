@@ -24,7 +24,13 @@ public class PdsReadData{
 	private File archivo = null;
 	private FileReader fr = null;
 	private BufferedReader br = null;
-	
+
+	/**
+	 * Este construtor da classe é necessário inicializa-lo indicando o nome
+	 * do arquivo que deseja-se abrir em modo leitura.
+	 * 
+	 * @param path_with_filename É o nome do arquivo a ler.
+	 **/	
 	public PdsReadData(String path_with_filename){
 		try{
 			this.archivo	= new File (path_with_filename);
@@ -44,7 +50,13 @@ public class PdsReadData{
 			}
 		} 
 	}
-	
+
+	/**
+	 * Esta função lee uma linha do arquivo aberto em modo leitura.
+	 *
+	 * <br>
+	 * Uma linha é lida.
+	 **/	
 	public String Scan(){
 		String cadena=null;
 		
@@ -57,6 +69,12 @@ public class PdsReadData{
 		return cadena;
 	}
 	
+	/**
+	 * Este método fecha o arquivo, que estava-se lendo.
+	 *
+	 * <br>
+	 * É fechado o manejador de arquivo que estava aberto em modo leitura.
+	 **/
 	public void Close(){
 		try{
 			this.fr.close();
