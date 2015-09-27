@@ -208,6 +208,35 @@ public class PdsVector {
 		}
 
 	}	
+	/**
+	 * Este método diminui a este vetor com outro vetor VecSrc e o resultado 
+	 * é retornado num novo vetor Vec. 
+	 * 
+	 * <br>
+	 * O tamanho do novo vetor é igual ao objeto que invca o método.
+	 * Se os tamanhos são diferentes, intersecta os tamanhos e faz a resta
+	 * somente na interseção. 
+	 * Se VecSrc é nulo então retorna um vetor copia do objeto que invoca o metodo.
+	 * Vector.NewSub(VecSrc) é equivalente a Vec=Vector-VecSrc. 
+	 * 
+	 * @param VecSrc É o vetor a usar em   Vec=Vector-VecSrc.  
+	 **/
+	public PdsVector NewSub(PdsVector VecSrc) {
+
+		PdsVector Vec=new PdsVector(this.Nel);	
+
+		if(VecSrc!=null)
+		{
+			for(int i=0;(i<this.Nel)&&(i<VecSrc.Nel);i++)	
+				Vec.V[i]=this.V[i]-VecSrc.V[i];
+		}
+		else
+		{
+				Vec.InitVector(this);
+		}
+
+		return Vec;
+	}
 	
 	/**
 	 * Este método multiplica a este vetor com outro vetor VecSrc elemento 
@@ -283,11 +312,15 @@ public class PdsVector {
 	}
 
 	/**
-	 * Este método retorna a norma do vetor
+	 * Este método retorna a norma do vetor X.
 	 * 
 	 * <br>
-	 * Vector.Norm() é equivalente a Norm=SQRT(Vector*Vector^T).  Onde ^T
-	 * indica transposta do vetor.
+	 * X.Norm() é equivalente a :
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * \\begin{equation} 
+	 * NORM = \\sqrt{\\sum_i{X_i^2}}
+	 * \\end{equation}
+	 * }</center>
 	 * 
 	 * @return Retorna a norma do vetor
 	 **/
@@ -298,11 +331,15 @@ public class PdsVector {
 	}
 
 	/**
-	 * Este método retorna a norma ao quadrado do vetor
+	 * Este método retorna a norma ao quadrado do vetor X.
 	 * 
 	 * <br>
-	 * Vector.Norm2() é equivalente a Norm2=Vector*Vector^T.  Onde ^T
-	 * indica transposta do vetor.
+	 * X.Norm2() é equivalente a:
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * \\begin{equation} 
+	 * NORM2 = \\sum_i{X_i^2}
+	 * \\end{equation}
+	 * }</center>
 	 * 
 	 * @return Retorna a norma ao quadrado do vetor.
 	 **/
@@ -313,11 +350,15 @@ public class PdsVector {
 	}
 
 	/**
-	 * Este método retorna o valor rms (raiz quadratico meio) do vetor.
+	 * Este método retorna o valor RMS (raiz quadratico meio) do vetor X.
 	 * 
 	 * <br>
-	 * Vector.Rms() é equivalente a RMS=SQRT(Vector*Vector^T/Nel).  Onde ^T
-	 * indica transposta do vetor.
+	 * X.Rms() é equivalente a : 
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * \\begin{equation} 
+	 * RMS = \\frac{\\sum_i{X_i^2}}{Nel} 
+	 * \\end{equation}
+	 * }</center>
 	 * 
 	 * @return Retorna o valor rms do vetor
 	 **/
@@ -328,9 +369,14 @@ public class PdsVector {
 	}
 	
 	/**
-	 * Este método retorna o valor meio do vetor
+	 * Este método retorna o valor meio {@latex.inline $\\mu$} do vetor.
 	 * 
 	 * <br>
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * \\begin{equation} 
+	 * \\mu = \\frac{\\sum_i{X_i}}{Nel} 
+	 * \\end{equation}
+	 * }</center>
 	 * 
 	 * @return Retorna o valor meio do vetor
 	 **/
@@ -341,13 +387,18 @@ public class PdsVector {
 	}
 	
 	/**
-	 * Este método retorna o valor da variança amostral $\sigma^2$ do vetor.
+	 * Este método retorna o valor da variança populacional {@latex.inline $\\sigma^2$} do vetor.
 	 * 
 	 * <br>
-	 * Vector.Var() é equivalente a Var=Sigma^2=(Vector-M)*(Vector-M)^T.  Onde ^T
-	 * indica transposta do vetor e M=Vector.Mean().
+	 * Dado um vetor X, entao X.Var() é equivalente a {@latex.inline $\\sigma^2=E[(X-\\mu)^2]=X.Var()$}.  
+	 * Onde  {@latex.inline $\\mu=X.Mean()$}.
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * \\begin{equation} 
+	 * \\sigma^2 = \\frac{\\sum_i{(X_i-\\mu)^2}}{Nel} 
+	 * \\end{equation}
+	 * }</center>
 	 * 
-	 * @return Retorna o valor da variança amostral.
+	 * @return Retorna o valor da variança populacional.
 	 **/
 	public double Var() {
 		double S=0;
@@ -360,15 +411,21 @@ public class PdsVector {
 	}
 	
 	/**
-	 * Este método retorna o valor do desvio padrão, Sigma=sqrt(variança),   do vetor.
+	 * Este método retorna o valor do desvio padrão {@latex.inline $\\sigma$},   
+	 * de um vetor X.
 	 * 
 	 * <br>
-	 * Vector.Sigma() é equivalente a Sigma=sqrt((Vector-M)*(Vector-M)^T).  Onde ^T
-	 * indica transposta do vetor, M=Vector.Mean() e sqrt() é a raiz quadrada.
+	 * X.Std() é equivalente a {@latex.inline $\\sigma=\\sqrt{E[(X-\\mu)^2]}=\\sqrt{X.Var()}$}. 
+	 * Onde {@latex.inline $\\mu=X.Mean()$}.
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * \\begin{equation} 
+	 * \\sigma = \\sqrt{\\frac{\\sum_i{(X_i-\\mu)^2}}{Nel}}
+	 * \\end{equation}
+	 * }</center>
 	 * 
 	 * @return Retorna o valor do desvio padrão.
 	 **/
-	public double Sigma() {
+	public double Std() {
 		double S=0;
 		double M=0;
 		

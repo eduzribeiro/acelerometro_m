@@ -23,38 +23,41 @@ import  net.sourceforge.pdsplibj.pdsrv.*;
 
 /**
  * Esta classe implementa um filtro Kalman de entrada unidimensional 
- * <img src="{@docRoot}/doc/imagenes/Zk.png" height="14" alt="Z_k"> e saída
- * <img src="{@docRoot}/doc/imagenes/hatXk.png" height="18" alt="\hat{X}_k">,
- * onde este ultimo é uma predição de 
- * <img src="{@docRoot}/doc/imagenes/Xk.png" height="14" alt="X_k">
- * no modelo de fonte ideal.
+ * {@latex.inline $Z_k$} e saída {@latex.inline $\\hat{X}_k$},
+ * onde este ultimo é uma predição de {@latex.inline $X_k$}
+ * no modelo de fonte ideal. {@cite Referencia1}
  *
  * <br><br>
- * <center><img src="{@docRoot}/doc/imagenes/PdsKalman1D.png" width="700" alt="Z_k=H X_k + V_k  X_k=A X_{k-1} + U_k"></center>
+ * <center><img src="{@docRoot}/doc/imagenes/PdsKalman1D/PdsKalman1D.png" width="700" alt="Z_k=H X_k + V_k  X_k=A X_{k-1} + U_k"></center>
  * <br><br>
  *  O filtro Kalman simula internamente uma fonte com a mesma estatística que
- *  <img src="{@docRoot}/doc/imagenes/Uk.png" width="14" alt="U_k">, esta nova fonte 
- *  é chamada de <img src="{@docRoot}/doc/imagenes/hatUk.png" width="14" alt="\hat{U}_k">,
+ *  {@latex.inline $U_k$}, esta nova fonte é chamada de {@latex.inline $\\hat{U}_k$},
  *  para criar esta fonte é necessario estimar no modelo de fonte ideal a variança de 
- *  <img src="{@docRoot}/doc/imagenes/Uk.png" width="14" alt="U_k">,
+ *  {@latex.inline $U_k$},
  *  para o resto de cálculos o filtro só necessita os parâmetros A,H e R, sendo R 
- *  a variância de <img src="{@docRoot}/doc/imagenes/Vk.png" width="14" alt="V_k">
- *  <br><br> Para usar esta classe é necessário escrever:
- *  <pre>  import net.sourceforge.pdsplibj.pdsdf.PdsKalman; </pre>
+ *  a variância de {@latex.inline $V_k$}
+ *  <br> 
+ *  <br>Para usar esta classe é necessário importar-la com:
+ *  <pre>  
+	import net.sourceforge.pdsplibj.pdsdf.PdsKalman1D; 
+ *  </pre>
  *
  *  <br>Para usar este filtro pode-se usar este código de exemplo:
  *  <pre>  
- *  PdsKalman1D filtro=new PdsKalman1D(A,H,Q,R);
- *  
- *  hatUk=filtro.EvaluateValue(Zk);
- *  
+    PdsKalman1D filtro=new PdsKalman1D(A,H,Q,R);
+  
+    hatUk=filtro.EvaluateValue(Zk);
  *  </pre>
  * 
+ * @bibitem Referencia1, Fernando Pujaico Rivera.
+ *                     MAnual xxx xx xxxxxx,
+ *                     xxxx. xxx, 2015.
+
  * @author Fernando Pujaico Rivera <a href="mailto:fernando.pujaico.rivera@gmail.com">fernando.pujaico.rivera@gmail.com</a>
  * @version 0.01
  * @since 2015-05-25
  * @see <a href="http://pdsplib.sourceforge.net"> PDS Project Libraries in Java </a>
- * @see PdsFir
+ * @see PdsKalman1DTool
  */
 public class PdsKalman1D {
 	//valores iterativos	
@@ -72,17 +75,28 @@ public class PdsKalman1D {
 	/**
 	 * Este construtor cria um filtro KALMAN.
 	 *
-	 * O filtro Kalman usa predizer seu comportamento um modelo de fonte real como:<br><br>
-	 * <center><img src="{@docRoot}/doc/imagenes/XkAXk1Uk.png" height="22"  alt="X_k=A X_{k-1} + U_k"></center><br>
+	 * O filtro Kalman usa (para predizer seu comportamento) um modelo de fonte ideal como:<br><br>
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * $X_k =A X_{k-1} + U_k$
+	 * }</center>
+	 * <br>
 	 * e um modelo de fonte real como:<br>
-	 * <center><img src="{@docRoot}/doc/imagenes/ZkHXkVk.png" height="22"  alt="Z_k=H X_k + V_k"></center><br>
-	 * Onde   <img src="{@docRoot}/doc/imagenes/UkN0Q.png" height="18" alt="U_k --> N(0,Q), Q=SigmaQ^2"> e
-	 * <img src="{@docRoot}/doc/imagenes/VkN0R.png" height="18" alt="V_k --> N(0,R), R=SigmaR^2">.
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * $Z_k=H X_k + V_k$
+	 * }</center>
+	 * <br>
+	 * Onde   {@latex.inline $U_k$} é uma variavel aleatoria Gaussiana com uma
+	 * função densidade de probabilidade {@latex.inline $N(0,Q)$}  e
+	 * {@latex.inline $V_k$} é uma variavel aleatoria Gaussiana com uma
+	 * função densidade de probabilidade {@latex.inline $N(0,R)$}
 	 *
-	 * @param A É um fator do modelo de fonte ideal <img src="{@docRoot}/doc/imagenes/Xk.png" height="14" alt="X_k"> onde <img src="{@docRoot}/doc/imagenes/XkAXk1Uk.png" height="14" alt="X_k=A X_{k-1} + U_k">
-	 * @param H É um fator do modelo de fonte real <img src="{@docRoot}/doc/imagenes/Zk.png" height="14" alt="Z_k"> onde <img src="{@docRoot}/doc/imagenes/ZkHXkVk.png" height="14" alt="Z_k=H X_k + V_k">
-	 * @param Q É a variância de <img src="{@docRoot}/doc/imagenes/UkN0Q.png" height="18" alt="U_k --> N(0,Q), Q=SigmaQ^2">
-	 * @param R É a variância de <img src="{@docRoot}/doc/imagenes/VkN0R.png" height="18" alt="V_k --> N(0,R), R=SigmaR^2">
+	 * <br><br>
+	 * <center><img src="{@docRoot}/doc/imagenes/PdsKalman1D/algoritmo.png" width="700"></center>
+	 *
+	 * @param A É um fator do modelo de fonte ideal {@latex.inline $X_k$} onde {@latex.inline $X_k =A X_{k-1} + U_k$}.
+	 * @param H É um fator do modelo de fonte real {@latex.inline $Z_k$} onde {@latex.inline $Z_k=H X_k + V_k$}.
+	 * @param Q É a variância de {@latex.inline $U_k$}.
+	 * @param R É a variância de {@latex.inline $V_k$}.
 	 **/
 	public PdsKalman1D(double A,double H,double Q,double R) {
 		this.X=0.0;
@@ -97,29 +111,22 @@ public class PdsKalman1D {
 		
 	}
 
-	/**
-	 * Este método inicia los primeiros valores  de X predito e P predito
-	 *
-	 * @param X0 Valor inicial de X predito.
-	 * @param P0 Valor inicial de P predito.
-	 **/
-	public void Init(double X0,double P0) {
-		this.X=X0;
-		this.P=P0;
-	}
 
 	/**
-	 * Este método avalia o filtro
+	 * Este método avalia o filtro Kalman.
 	 * 
-	 * O filtro é avaliado de jeito que no filtro entra ZNow e é
-	 * retirado um valor filtrado.
+	 * Este é avaliado do jeito que na entrada recebe ZNow{@latex.inline $\\equiv Z_k$} e é
+	 * retirado na sua saída um valor filtrado {@latex.inline $\\hat{X}_k$}.
+	 * Sendo que {@latex.inline $\\hat{X}_k$} é um valor aproximado de
+	 * {@latex.inline $X_k$}.
+	 * <center><img src="{@docRoot}/doc/imagenes/PdsKalman1D/KalmanModel.png" width="300" alt="Kalman Model"></center>
 	 * 
 	 * @param ZNow É a entrada do filtro.
-	 * @return Retorna uma sinal filtrada <img src="{@docRoot}/doc/imagenes/hatXk.png" height="18" alt="\hat{X}_k">. 
+	 * @return Retorna uma sinal filtrada {@latex.inline $\\hat{X}_k$}. 
 	 **/
 	public double EvaluateValue(double ZNow) {
 
-		//variables temporales
+		//variaveis temporais
 		double Xminus;
 		double Pminus;
 		double K;
@@ -129,7 +136,7 @@ public class PdsKalman1D {
 		UNow=G.GetValue();
 
 		//Prediction
-		Xminus=this.X+ UNow;
+		Xminus=this.A*this.X+ UNow;
 		Pminus=this.A*this.P*this.A+this.Q;
 
 		//Correction
@@ -142,13 +149,33 @@ public class PdsKalman1D {
 	}
 
 	/**
-	 * Este método retorna o valor atual da variável P.
+	 * Este método retorna o valor atual da variável interna {@latex.inline $P_k$},
+	 * que é a variança de {@latex.inline $\\hat{X}$}.
 	 * 
-	 * Este método debe ser usado apos usar {@link #EvaluateValue(double ZNow)}.
-	 * @return Retorna o valor atual da variável P
+	 * <center>{@latex.ilb %preamble{\\usepackage{amssymb}} %resolution{150} 
+	 * $P_k  = Var(\\hat{X}) = E[(\\hat{X}-\\mu_{\\hat{X}})^2]$
+	 * }</center>
+	 * <br>
+	 * Se deseja-se usar este método, então deve-se aplicar após a função {@link #EvaluateValue(double ZNow)}.
+
+	 * @return Retorna o valor atual da variável {@latex.inline $P_k$}
 	 **/
 	public double GetCurrentP() {
 		return this.P;
 	}
-  
+
+	/**
+	 * Este método inicia los primeiros valores  de {@latex.inline $\\hat{X}_k$} 
+	 * predito e {@latex.inline $P_k$} predito.
+	 *
+	 * Esta funcão é só para os mais curiosos que desejam ver/mexer adentro
+	 * do filtro Kalman.
+	 * @param X0 Valor inicial de {@latex.inline $\\hat{X}_k$} predito.
+	 * @param P0 Valor inicial de {@latex.inline $P_k$} predito.
+	 **/
+	public void Init(double X0,double P0) {
+		this.X=X0;
+		this.P=P0;
+	}
+ 
 }
